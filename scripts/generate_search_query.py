@@ -77,6 +77,7 @@ def main():
     parser.add_argument("--database", "-d", required=True, help="Database name")
     parser.add_argument("--collection", "-c", required=True, help="Collection name")
     parser.add_argument("--search-index", "-s", help="Search index name (not used in this script)")
+    parser.add_argument("--stored-source", help="returStoredSource true or false")
     parser.add_argument("--output", "-o", default="/tmp/search_query.json", help="Output file path")
     parser.add_argument("--mongod-uri", default="mongodb://localhost:27017/?directConnection=true", 
                        help="MongoDB connection URI")
@@ -100,6 +101,9 @@ def main():
     if args.search_index:
         args.query["index"] = args.search_index
     
+    if args.stored_source:
+        args.query["returnStoredSource"] = args.stored_source.lower() == "true"
+
     try:
         generate_query_file(
             args.database,
