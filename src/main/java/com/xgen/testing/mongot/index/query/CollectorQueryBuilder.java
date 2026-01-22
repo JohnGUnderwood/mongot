@@ -165,6 +165,7 @@ public class CollectorQueryBuilder {
         this.concurrent.orElse(false),
         sortSpec,
         this.tracking,
-        this.returnScope);
+        this.returnScope,
+        Optional.empty());
   }
 }

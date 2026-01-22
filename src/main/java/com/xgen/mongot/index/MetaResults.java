@@ -18,8 +18,12 @@ import org.bson.BsonDocument;
  * Contains meta info for the query.
  *
  * @param facet Keyed by facet name.
+ * @param termStats Keyed by field name.
  */
-public record MetaResults(CountResult count, Optional<Map<String, FacetInfo>> facet)
+public record MetaResults(
+    CountResult count,
+    Optional<Map<String, FacetInfo>> facet,
+    Optional<Map<String, TermStatsInfo>> termStats)
     implements DocumentEncodable {
 
   private static class Fields {
@@ -32,12 +36,23 @@ public record MetaResults(CountResult count, Optional<Map<String, FacetInfo>> fa
                 Value.builder().classValue(FacetInfo::fromBson).disallowUnknownFields().required())
             .optional()
             .noDefault();
+
+    static final Field.Optional<Map<String, TermStatsInfo>> TERM_STATS_RESULTS =
+        Field.builder("termStats")
+            .mapOf(
+                Value.builder()
+                    .classValue(TermStatsInfo::fromBson)
+                    .disallowUnknownFields()
+                    .required())
+            .optional()
+            .noDefault();
   }
 
-  public static final MetaResults EMPTY = new MetaResults(CountResult.totalCount(0));
+  public static final MetaResults EMPTY =
+      new MetaResults(CountResult.totalCount(0), Optional.empty(), Optional.empty());
 
   public MetaResults(CountResult count) {
-    this(count, Optional.empty());
+    this(count, Optional.empty(), Optional.empty());
   }
 
   /**
@@ -48,6 +63,7 @@ public record MetaResults(CountResult count, Optional<Map<String, FacetInfo>> fa
   public static MetaResults mergeCountResult(List<MetaResults> metaResultsList) {
     for (var metaResults : metaResultsList) {
       Check.isEmpty(metaResults.facet(), "metaResults.getFacet().");
+      Check.isEmpty(metaResults.termStats(), "metaResults.getTermStats().");
     }
     List<CountResult> countResults =
         metaResultsList.stream().map(MetaResults::count).collect(Collectors.toList());
@@ -63,7 +79,8 @@ public record MetaResults(CountResult count, Optional<Map<String, FacetInfo>> fa
   public static MetaResults fromBson(DocumentParser parser) throws BsonParseException {
     return new MetaResults(
         parser.getField(Fields.COUNT_RESULT).unwrap(),
-        parser.getField(Fields.FACET_RESULTS).unwrap());
+        parser.getField(Fields.FACET_RESULTS).unwrap(),
+        parser.getField(Fields.TERM_STATS_RESULTS).unwrap());
   }
 
   @Override
@@ -71,6 +88,7 @@ public record MetaResults(CountResult count, Optional<Map<String, FacetInfo>> fa
     return BsonDocumentBuilder.builder()
         .field(Fields.COUNT_RESULT, this.count)
         .field(Fields.FACET_RESULTS, this.facet)
+        .field(Fields.TERM_STATS_RESULTS, this.termStats)
         .build();
   }
 }

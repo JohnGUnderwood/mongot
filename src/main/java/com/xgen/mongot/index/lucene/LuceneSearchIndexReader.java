@@ -616,7 +616,8 @@ public class LuceneSearchIndexReader implements SearchIndexReader {
             scoreDetailsManager,
             queryCursorOptions,
             queryOptimizationFlags),
-        this.metaResultsBuilder.getCountMetaResults(queryInfo.topDocs, query.count().type()));
+        this.metaResultsBuilder.getCountAndTermStatsMetaResults(
+            searcherReference, queryInfo.topDocs, query.count().type(), query.termStats()));
   }
 
   @VisibleForTesting

@@ -55,6 +55,7 @@ java_library(
         "SearchIndexReader.java",
         "SearchResult.java",
         "SearchSortValues.java",
+        "TermStatsInfo.java",
         "Variables.java",
         "VectorIndex.java",
         "VectorIndexReader.java",

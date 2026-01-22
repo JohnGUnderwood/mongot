@@ -3,6 +3,7 @@ package com.xgen.mongot.index.query;
 import com.xgen.mongot.index.query.collectors.Collector;
 import com.xgen.mongot.index.query.counts.Count;
 import com.xgen.mongot.index.query.highlights.UnresolvedHighlight;
+import com.xgen.mongot.index.query.operators.AllDocumentsOperator;
 import com.xgen.mongot.index.query.operators.Operator;
 import com.xgen.mongot.index.query.operators.OperatorEmbeddedRootValidator;
 import com.xgen.mongot.index.query.sort.SequenceToken;
@@ -72,6 +73,13 @@ public sealed interface SearchQuery extends Query permits CollectorQuery, Operat
 
     public static final Field.WithDefault<Boolean> CONCURRENT =
         Field.builder("concurrent").booleanField().optional().withDefault(false);
+
+    public static final Field.Optional<TermStatsRequest> TERM_STATS =
+        Field.builder("termStats")
+            .classField(TermStatsRequest::fromBson)
+            .disallowUnknownFields()
+            .optional()
+            .noDefault();
   }
 
   static SearchQuery fromBson(BsonDocument document) throws BsonParseException {
@@ -140,7 +148,8 @@ public sealed interface SearchQuery extends Query permits CollectorQuery, Operat
           parser.getField(Fields.CONCURRENT).unwrap(),
           sortSpec,
           parser.getField(Fields.TRACKING).unwrap(),
-          returnScope.unwrap());
+          returnScope.unwrap(),
+          parser.getField(Fields.TERM_STATS).unwrap());
     }
 
     if (collector.isPresent()) {
@@ -155,13 +164,25 @@ public sealed interface SearchQuery extends Query permits CollectorQuery, Operat
           parser.getField(Fields.CONCURRENT).unwrap(),
           sortSpec,
           parser.getField(Fields.TRACKING).unwrap(),
-          returnScope.unwrap());
+          returnScope.unwrap(),
+          parser.getField(Fields.TERM_STATS).unwrap());
     }
-    String errorDescription =
-        String.format(
-            "Query should contain either an operator [%s] " + "or a collector [%s]",
-            Operator.ALL_OPERATORS, Collector.ALL_COLLECTORS);
-    return parser.getContext().handleSemanticError(errorDescription);
+
+    // If no operator or collector is present, default to AllDocumentsOperator
+    // This allows queries with only count/termStats to work
+    return new OperatorQuery(
+        AllDocumentsOperator.INSTANCE,
+        parser.getField(Query.Fields.INDEX).unwrap(),
+        parser.getField(Fields.COUNT).unwrap(),
+        parser.getField(Fields.HIGHLIGHT).unwrap(),
+        pagination,
+        returnStoredSource.unwrap(),
+        parser.getField(Fields.SCORE_DETAILS).unwrap(),
+        parser.getField(Fields.CONCURRENT).unwrap(),
+        sortSpec,
+        parser.getField(Fields.TRACKING).unwrap(),
+        returnScope.unwrap(),
+        parser.getField(Fields.TERM_STATS).unwrap());
   }
 
   Count count();
@@ -169,6 +190,8 @@ public sealed interface SearchQuery extends Query permits CollectorQuery, Operat
   Optional<UnresolvedHighlight> highlight();
 
   boolean scoreDetails();
+
+  Optional<TermStatsRequest> termStats();
 
   /**
    * Returns the final sort criteria for the query, or {@link Optional#empty()} if we should use the

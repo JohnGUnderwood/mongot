@@ -636,6 +636,7 @@ public class TestLuceneSearchIndexReader {
             false,
             Optional.empty(),
             Optional.empty(),
+            Optional.empty(),
             Optional.empty());
 
     readerSpy.collectorQuery(

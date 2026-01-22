@@ -76,7 +76,7 @@ public sealed interface Collector extends DocumentEncodable permits FacetCollect
   BsonValue collectorToBson();
 
   static Optional<Collector> atMostOneFromBson(DocumentParser parser) throws BsonParseException {
-    return parser.getGroup().atMostOneOf(parser.getField(Fields.FACET));
+    return parser.getField(Fields.FACET).unwrap().map(fc -> (Collector) fc);
   }
 
   Type getType();

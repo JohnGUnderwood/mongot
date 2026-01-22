@@ -1,0 +1,42 @@
+{
+  "valid": [
+    {
+      "description": "single field term stats",
+      "value": {
+        "termStats": {
+          "fields": ["title"]
+        }
+      }
+    },
+    {
+      "description": "multiple fields term stats",
+      "value": {
+        "termStats": {
+          "fields": ["title", "description", "author"]
+        }
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "description": "missing fields is invalid",
+      "value": "termStats: { }"
+    },
+    {
+      "description": "empty fields array is invalid",
+      "value": {
+        "termStats": {
+          "fields": []
+        }
+      }
+    },
+    {
+      "description": "fields must be strings",
+      "value": {
+        "termStats": {
+          "fields": [123, 456]
+        }
+      }
+    }
+  ]
+}

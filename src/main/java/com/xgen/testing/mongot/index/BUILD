@@ -16,6 +16,7 @@ java_library(
         "SearchHighlightTextBuilder.java",
         "SearchResultBuilder.java",
         "SearchSortValuesBuilder.java",
+        "TermStatsInfoBuilder.java",
         "VectorIndexUtils.java",
         "VectorSearchResultBuilder.java",
     ],

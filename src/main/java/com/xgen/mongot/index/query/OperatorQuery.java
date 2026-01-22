@@ -19,7 +19,8 @@ public record OperatorQuery(
     boolean concurrent,
     Optional<SortSpec> rawSortSpec,
     Optional<Tracking> tracking,
-    Optional<ReturnScope> returnScope)
+    Optional<ReturnScope> returnScope,
+    Optional<TermStatsRequest> termStats)
     implements SearchQuery {
 
   public OperatorQuery {

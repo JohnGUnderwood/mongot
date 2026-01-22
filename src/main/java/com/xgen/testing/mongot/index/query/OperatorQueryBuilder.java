@@ -165,6 +165,7 @@ public class OperatorQueryBuilder {
         this.concurrent.orElse(false),
         sortSpec,
         this.tracking,
-        this.returnScope);
+        this.returnScope,
+        Optional.empty());
   }
 }

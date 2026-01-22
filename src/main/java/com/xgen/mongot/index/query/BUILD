@@ -15,6 +15,7 @@ java_library(
         "SearchNodePreference.java",
         "SearchQuery.java",
         "SearchQueryTimeMappingChecks.java",
+        "TermStatsRequest.java",
         "Tracking.java",
         "VectorQueryTimeMappingChecks.java",
         "VectorSearchQuery.java",

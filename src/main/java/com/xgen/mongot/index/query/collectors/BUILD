@@ -8,6 +8,7 @@ java_library(
         "FacetCollector.java",
         "FacetDefinition.java",
         "GenericDrillSidewaysFacetOperatorBuilder.java",
+        "TermStatsDefinition.java",
     ],
     visibility = ["//visibility:public"],
     exports = [
