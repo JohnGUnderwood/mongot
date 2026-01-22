@@ -78,6 +78,17 @@ tools.buildifier.fix:
 tools.buf.lint:
 	@$(call BAZEL) test --build_tests_only $(shell $(call BAZEL) query 'kind(buf_lint_test, //...)')
 
+.PHONY: tools.search-query
+tools.search-query:
+	@if [ -z "$(QUERY_FILE)" ]; then \
+		echo "Usage: make tools.search-query QUERY_FILE=/path/to/query.json"; \
+		echo ""; \
+		echo "Generate a query file first:"; \
+		echo "  python scripts/generate_search_query.py --database sample_mflix --collection movies --output /tmp/query.json"; \
+		exit 1; \
+	fi
+	@$(call BAZEL) run //src/main/java/com/xgen/mongot/tools:search_query_tool -- --query-file $(QUERY_FILE)
+
 .PHONY: tools.fix_unused_deps
 tools.fix_unused_deps:
 	echo "Note: Running unused_deps currently requires downgrading to bazel 6.5"

@@ -28,8 +28,8 @@ if mongosh --quiet --eval "db.getSiblingDB('sample_airbnb').getCollectionNames()
   echo "Sample data already exists. Skipping restore."
 else
   echo "Sample data not found. Running mongorestore..."
-  if [ -f "/sampledata.archive" ]; then
-     mongorestore --archive=/sampledata.archive
+  if [ -f "./sampledata.archive" ]; then
+     mongorestore --archive=./sampledata.archive
      echo "Sample data restored successfully."
   else
      echo "Warning: sampledata.archive not found"
